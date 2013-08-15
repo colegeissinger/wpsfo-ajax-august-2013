@@ -87,13 +87,15 @@
 		public function wcsf_ajax() {
 
 			// Check that we requested this from the input field and the nonce is valid. Prevents malicious users.
-			if ( isset( $_POST['submission'] ) && $_POST['submission'] && wp_verify_nonce( $_POST['nonce'], 'wcsf-ajax' ) )
-				continue;
+			if ( ! isset( $_POST['submission'] ) && ! $_POST['submission'] && ! wp_verify_nonce( $_POST['nonce'], 'wcsf-ajax' ) )
+				return;
 
 			echo json_encode( array(
 				'body' => wp_kses_post( $_POST['data'] ),
 			) );
-			die(); // This funciton is REQUIRED within WordPress or else you'll get 'parse' errors because there's a zero at the end of your JSON
+			// This funciton is REQUIRED within WordPress or else you'll get 'parse' errors 
+			// because there's a zero at the end of your JSON
+			die(); 
 		}
 
 		/**
@@ -103,7 +105,7 @@
 			echo '<form id="wcsf-example">';
 				echo '<input type="text" class="wcsf-text-field" placeholder="Add your text" value="">';
 				echo '<input type="submit" class="wcsf-submit-field" value="Add yo text!" />';
-				echo '<input type="hidden" name="wcsf-submitted" value="true" />';
+				echo '<input type="hidden" name="wcsf-submitted" class="wcsf-submitted" value="true" />';
 				wp_nonce_field( 'wcsf-ajax', 'wcsf-nonce' ); // Adds our nonce and creates a unique key automatically! #moremagix
 			echo '</form>';
 		}
